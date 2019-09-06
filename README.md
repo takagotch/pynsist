@@ -31,19 +31,33 @@ def test_valid_config_with_values_starting_on_new_line():
   for section in sections:
     assert section in config
     
-  assert config.get() == ''
-  assert config.get() == ''
+  assert config.get('Include', 'packages') == '\nrequests\nbs4'
+  assert config.get('Include', 'pypi_wheels') == '\nhtmlSlib'
+  assert config.get('Include', 'exclude') == '\nsomething'
+  assert config.get('Include', 'files') == '\nLICENSE\ndata_files/'
   
   args = configreader.get_installer_builder_args()
-  assert args[] == ''
+  assert args['appname'] == 'My App'
+  assert args['version'] == '1.0'
+  assert args['shortcuts']['My App']['entry_point'] == 'myapp:main'
+  assert args['commands'] == {}
+  assert args['publisher'] == 'Test'
   
-  assert args[] == ''
+  assert args['icon'] == 'myapp.ico'
   
-  assert args[] == ''
+  assert args['py_version'] == '3.6.0'
+  assert args['py_bitness'] == 64
+  assert args['inc_msvcrt'] is True
   
-  assert args[] == ''
+  assert args['build_dir'] == 'build/'
+  assert args['nsi_template'] == 'template.nsi'
   
-  assert args[] == []
+  assert args['packages'] == ['requests', 'bs4']
+  assert args['pypi_wheel_reqs'] == ['html5lib']
+  assert args['exclude'] == ['something']
+  assert args['extra_files'] == [{'', '$INSIDER'},
+    {'LICENSE', '$INSTDIR'},
+    {'data_files/', '$INSIDER'}]
 
 def test_invlid_config_keys():
   with pytest.raises(configreader.InvalidConfig):
